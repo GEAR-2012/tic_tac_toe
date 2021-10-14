@@ -1,6 +1,12 @@
 .app {
   display: grid;
-  gap: 3rem;
+  gap: 2.6rem;
   justify-content: center;
   justify-items: center;
+}
+
+@media only screen and (min-width: 768px) {
+  .app {
+    gap: 3rem;
+  }
 }

@@ -1,0 +1,10 @@
+.header {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1rem;
+}
+
+@media only screen and (min-width: 768px) {
+  .header {
+    font-size: 2rem;
+  }
+}

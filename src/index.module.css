@@ -21,8 +21,14 @@ html {
 }
 
 body {
-  padding: 2rem;
+  padding: 2.6rem 0;
   font-family: "Raleway", sans-serif;
   line-height: 1;
   color: var(--color-light);
+}
+
+@media only screen and (min-width: 768px) {
+  body {
+    padding: 2rem;
+  }
 }

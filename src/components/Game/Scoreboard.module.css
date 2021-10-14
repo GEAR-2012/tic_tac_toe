@@ -1,8 +1,7 @@
 .scoreboard {
-  width: 26rem;
+  width: 17rem;
   display: grid;
   grid-auto-flow: column;
-  gap: 2rem;
   justify-items: center;
   justify-content: space-between;
   color: var(--color-light);
@@ -13,12 +12,30 @@
 }
 
 .player {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 400;
 }
 
 .score {
-  font-size: 3.25rem;
+  font-size: 2rem;
   font-weight: 400;
-  margin-top: 0.2rem;
+  margin-top: 0.5rem;
+}
+
+@media only screen and (min-width: 768px) {
+  .scoreboard {
+    width: 26rem;
+    gap: 2rem;
+  }
+
+  .player {
+    font-size: 1.25rem;
+    font-weight: 400;
+  }
+
+  .score {
+    font-size: 3.25rem;
+    font-weight: 400;
+    margin-top: 0.2rem;
+  }
 }

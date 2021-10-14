@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Header from "./components/Game/Header";
 import Gameboard from "./components/Game/Gameboard";
 import Scoreboard from "./components/Game/Scoreboard";
 import { machineDefense, checkRows, checkCols, checkLeftRight } from "./functions/gameLogic";
@@ -145,6 +146,7 @@ function App() {
 
   return (
     <div className={classes.app}>
+      <Header />
       <Gameboard highlight={highlight} onSpotClick={spotClickHandler} gameMap={gameMap} />
       <Scoreboard scorePlayerA={scorePlayerA} scorePlayerB={scorePlayerB} scoreTie={scoreTie} />
     </div>

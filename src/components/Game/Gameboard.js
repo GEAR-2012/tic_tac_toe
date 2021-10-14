@@ -75,9 +75,9 @@ const Gameboard = (props) => {
       }
     }
     return (
-      <span key={coor} id={coor} onClick={clickHandler} className={`${classes.spot} ${classes[colClass]}`}>
-        {mark}
-      </span>
+      <div key={coor} id={coor} onClick={clickHandler} className={`${classes.spot} ${classes[colClass]}`}>
+        <p className={classes.mark}>{mark}</p>
+      </div>
     );
   });
 
