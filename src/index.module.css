@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=Raleway:wght@200;300;400;500&display=swap");
+/* font-family: 'Raleway', sans-serif; */
+/* font-family: 'Orbitron', sans-serif; */
+
+:root {
+  /* colors */
+  --color-bg: #111;
+  --color-dimmed: #666666;
+  --color-light: #eeeeee;
+  --color-highlight: #9dff00;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--color-bg);
+}
+
+body {
+  padding: 2rem;
+  font-family: "Raleway", sans-serif;
+  line-height: 1;
+  color: var(--color-light);
+}

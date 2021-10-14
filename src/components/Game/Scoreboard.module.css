@@ -1,0 +1,24 @@
+.scoreboard {
+  width: 26rem;
+  display: grid;
+  grid-auto-flow: column;
+  gap: 2rem;
+  justify-items: center;
+  justify-content: space-between;
+  color: var(--color-light);
+}
+
+.item {
+  text-align: center;
+}
+
+.player {
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.score {
+  font-size: 3.25rem;
+  font-weight: 400;
+  margin-top: 0.2rem;
+}
