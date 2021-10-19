@@ -30,7 +30,7 @@ let isPlayerMarked = Math.floor(Math.random() * 2);
 // level 2 => defense & offense targets
 
 function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState("1");
+  const [isMenuOpen, setIsMenuOpen] = useState("0");
   const [level, setLevel] = useState(2);
   const [gameMap, setGameMap] = useState(initialGameMap);
   const [scorePlayerA, setScorePlayerA] = useState(0);
