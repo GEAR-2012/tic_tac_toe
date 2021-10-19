@@ -1,145 +1,144 @@
-export const machineDefense = (state, markA, markB) => {
+// checks for free spots on gameboard return true if so else return false
+export const checkForFreeSpot = (state) => {
+  return Object.values(state).includes(null);
+};
+
+// its looking for possible threats or winning possibilities
+export const getTargets = (state, markA, markB, mode) => {
+  let searchedMark;
+  if (mode === "defense") {
+    searchedMark = markA;
+  } else if (mode === "offense") {
+    searchedMark = markB;
+  }
   const targets = [];
-
-  if (checkRows(state, markA, markB).targets) {
-    targets.push(...checkRows(state, markA, markB).targets);
+  if (checkRows(state, markA, markB, searchedMark).targets) {
+    targets.push(...checkRows(state, markA, markB, searchedMark).targets);
   }
-
-  if (checkCols(state, markA, markB).targets) {
-    targets.push(...checkCols(state, markA, markB).targets);
+  if (checkCols(state, markA, markB, searchedMark).targets) {
+    targets.push(...checkCols(state, markA, markB, searchedMark).targets);
   }
-
-  if (checkLeftRight(state, markA, markB).targets) {
-    targets.push(...checkLeftRight(state, markA, markB).targets);
+  if (checkLeftRight(state, markA, markB, searchedMark).targets) {
+    targets.push(...checkLeftRight(state, markA, markB, searchedMark).targets);
   }
-
   return targets;
 };
 
-export const checkRows = (state, markA, markB) => {
-  let matchingRow;
+// check for matchins or possible targets
+const checkRows = (state, markA, markB, searchedMark) => {
+  let matchingSet;
   const targets = [];
-
-  const rowA = Object.entries(state).filter((spot) => spot[0][0] === "a" && spot);
-  const rowB = Object.entries(state).filter((spot) => spot[0][0] === "b" && spot);
-  const rowC = Object.entries(state).filter((spot) => spot[0][0] === "c" && spot);
-  if (rowA.filter((col) => col[1] === markA).length === 3) {
-    matchingRow = "aA";
-  }
-  if (rowA.filter((col) => col[1] === markB).length === 3) {
-    matchingRow = "aB";
-  }
-  if (rowB.filter((col) => col[1] === markA).length === 3) {
-    matchingRow = "bA";
-  }
-  if (rowB.filter((col) => col[1] === markB).length === 3) {
-    matchingRow = "bB";
-  }
-  if (rowC.filter((col) => col[1] === markA).length === 3) {
-    matchingRow = "cA";
-  }
-  if (rowC.filter((col) => col[1] === markB).length === 3) {
-    matchingRow = "cB";
-  }
-  // row A
-  if (rowA.filter((col) => col[1] === markA).length > 1) {
-    if (rowA.filter((col) => col[1] === null).length === 1) {
-      targets.push(rowA.find((col) => col[1] === null)[0]);
+  const keys = ["a", "b", "c"];
+  keys.forEach((key) => {
+    // make a set with the marks
+    const pattern = new RegExp(key);
+    const set = Object.entries(state).filter((spot) => (pattern.test(spot[0]) ? spot : false));
+    // check for 3 matches
+    matchingSet = matchingSet ?? checkFor3Matches(set, markA, "row");
+    matchingSet = matchingSet ?? checkFor3Matches(set, markB, "row");
+    // check for defensive targets
+    if (lookingForTargets(set, searchedMark)) {
+      targets.push(lookingForTargets(set, searchedMark));
     }
-  }
-  // row B
-  if (rowB.filter((col) => col[1] === markA).length > 1) {
-    if (rowB.filter((col) => col[1] === null).length === 1) {
-      targets.push(rowB.find((col) => col[1] === null)[0]);
-    }
-  }
-  // row C
-  if (rowC.filter((col) => col[1] === markA).length > 1) {
-    if (rowC.filter((col) => col[1] === null).length === 1) {
-      targets.push(rowC.find((col) => col[1] === null)[0]);
-    }
-  }
-
-  return { targets: targets, matchingRow: matchingRow };
+  });
+  return { targets: targets, matchingRow: matchingSet };
 };
 
-export const checkCols = (state, markA, markB) => {
-  let matchingCol;
+const checkCols = (state, markA, markB, searchedMark) => {
+  let matchingSet;
   const targets = [];
-  const col0 = Object.entries(state).filter((spot) => spot[0][1] === "0" && spot);
-  const col1 = Object.entries(state).filter((spot) => spot[0][1] === "1" && spot);
-  const col2 = Object.entries(state).filter((spot) => spot[0][1] === "2" && spot);
-  if (col0.filter((row) => row[1] === markA).length === 3) {
-    matchingCol = "0A";
-  }
-  if (col0.filter((row) => row[1] === markB).length === 3) {
-    matchingCol = "0B";
-  }
-  if (col1.filter((row) => row[1] === markA).length === 3) {
-    matchingCol = "1A";
-  }
-  if (col1.filter((row) => row[1] === markB).length === 3) {
-    matchingCol = "1B";
-  }
-  if (col2.filter((row) => row[1] === markA).length === 3) {
-    matchingCol = "2A";
-  }
-  if (col2.filter((row) => row[1] === markB).length === 3) {
-    matchingCol = "2B";
-  }
-  // col 0
-  if (col0.filter((row) => row[1] === markA).length > 1) {
-    if (col0.filter((row) => row[1] === null).length === 1) {
-      targets.push(col0.find((row) => row[1] === null)[0]);
+  const keys = ["0", "1", "2"];
+  keys.forEach((key) => {
+    // make a set with the marks
+    const pattern = new RegExp(key);
+    const set = Object.entries(state).filter((spot) => (pattern.test(spot[0]) ? spot : false));
+    // check for 3 matches
+    matchingSet = matchingSet ?? checkFor3Matches(set, markA, "col");
+    matchingSet = matchingSet ?? checkFor3Matches(set, markB, "col");
+    // check for defensive targets
+    if (lookingForTargets(set, searchedMark)) {
+      targets.push(lookingForTargets(set, searchedMark));
     }
-  }
-  // col 1
-  if (col1.filter((row) => row[1] === markA).length > 1) {
-    if (col1.filter((row) => row[1] === null).length === 1) {
-      targets.push(col1.find((row) => row[1] === null)[0]);
-    }
-  }
-  // col 2
-  if (col2.filter((row) => row[1] === markA).length > 1) {
-    if (col2.filter((row) => row[1] === null).length === 1) {
-      targets.push(col2.find((row) => row[1] === null)[0]);
-    }
-  }
-
-  return { targets: targets, matchingCol: matchingCol };
+  });
+  return { targets: targets, matchingCol: matchingSet };
 };
 
-export const checkLeftRight = (state, markA, markB) => {
+const checkLeftRight = (state, markA, markB, searchedMark) => {
   let matching;
   const targets = [];
+  // making line arrays
   const lineLeft = Object.entries(state).filter((spot) => spot[0] === "a0" || spot[0] === "b1" || spot[0] === "c2");
   const lineRight = Object.entries(state).filter((spot) => spot[0] === "a2" || spot[0] === "b1" || spot[0] === "c0");
+  // checking 3 matches
 
-  if (lineLeft.filter((spot) => spot[1] === markA).length === 3) {
-    matching = "lA";
-  }
-  if (lineLeft.filter((spot) => spot[1] === markB).length === 3) {
-    matching = "lB";
-  }
-  if (lineRight.filter((spot) => spot[1] === markA).length === 3) {
-    matching = "rA";
-  }
-  if (lineRight.filter((spot) => spot[1] === markB).length === 3) {
-    matching = "rB";
-  }
+  matching = matching ?? checkFor3Matches(lineLeft, markA, "left");
+  matching = matching ?? checkFor3Matches(lineLeft, markB, "left");
+  matching = matching ?? checkFor3Matches(lineRight, markA, "right");
+  matching = matching ?? checkFor3Matches(lineRight, markB, "right");
 
-  // line left
-  if (lineLeft.filter((spot) => spot[1] === markA).length > 1) {
-    if (lineLeft.filter((spot) => spot[1] === null).length === 1) {
-      targets.push(lineLeft.find((spot) => spot[1] === null)[0]);
-    }
+  if (lookingForTargets(lineLeft, searchedMark)) {
+    targets.push(lookingForTargets(lineLeft, searchedMark));
   }
-  // line right
-  if (lineRight.filter((spot) => spot[1] === markA).length > 1) {
-    if (lineRight.filter((spot) => spot[1] === null).length === 1) {
-      targets.push(lineRight.find((spot) => spot[1] === null)[0]);
-    }
+  if (lookingForTargets(lineRight, searchedMark)) {
+    targets.push(lookingForTargets(lineRight, searchedMark));
   }
-
   return { targets: targets, matching: matching };
+};
+
+// check for 3 same marks in a set
+const checkFor3Matches = (set, mark, type) => {
+  if (set.filter((item) => item[1] === mark).length === 3) {
+    // returns the key of matched line & the mark
+    // get key
+    let key;
+    if (type === "row") {
+      key = set[0][0].slice(0, 1);
+    } else if (type === "col") {
+      key = set[0][0].slice(1);
+    } else if (type === "left") {
+      key = "l";
+    } else if (type === "right") {
+      key = "r";
+    }
+    return key + mark; // '1X' or 'bO' or 'cX'
+  }
+};
+
+// check for 2 same mark & an empty place in a set
+const lookingForTargets = (set, mark) => {
+  const countSameMarks = set.filter((item) => item[1] === mark).length;
+  const countEmptySpots = set.filter((item) => item[1] === null).length;
+  if (countSameMarks > 1) {
+    if (countEmptySpots === 1) {
+      // returns the key of the spot
+      const [keyOfTarget] = set.filter((item) => item[1] === null).map((spot) => spot[0]);
+      return keyOfTarget;
+    }
+  }
+};
+
+export const checkForWinner = (state, markA, markB) => {
+  const row = checkRows(state, markA, markB).matchingRow;
+  const col = checkCols(state, markA, markB).matchingCol;
+  const leftRight = checkLeftRight(state, markA, markB).matching;
+  let winner;
+  let line;
+
+  if (row || col || leftRight) {
+    if (row) {
+      winner = row[1];
+      line = row[0];
+    }
+    if (col) {
+      winner = col[1];
+      line = col[0];
+    }
+    if (leftRight) {
+      winner = leftRight[1];
+      line = leftRight[0];
+    }
+    return { winner: winner, line: line };
+  } else {
+    return false;
+  }
 };

@@ -1,10 +1,22 @@
 .header {
+  color: var(--color-light);
+  grid-auto-flow: column;
+  display: grid;
+  grid-gap: 1rem;
+  align-items: center;
+}
+
+.title {
   font-family: "Orbitron", sans-serif;
-  font-size: 1rem;
+  font-size: 2rem;
 }
 
 @media only screen and (min-width: 768px) {
   .header {
-    font-size: 2rem;
+    grid-gap: 2rem;
+  }
+
+  .title {
+    font-size: 4rem;
   }
 }

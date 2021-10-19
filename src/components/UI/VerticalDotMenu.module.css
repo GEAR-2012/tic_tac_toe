@@ -1,0 +1,23 @@
+.menu {
+  --icon-size: 2rem;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  display: grid;
+  grid-gap: calc(var(--icon-size) / 8);
+  padding: 0 calc(var(--icon-size) / 2.6666);
+  grid-template-rows: repeat(3, 1fr);
+  cursor: pointer;
+}
+
+.dot {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--color-light);
+}
+
+@media only screen and (min-width: 768px) {
+  .menu {
+    --icon-size: 3.4rem;
+  }
+}

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import MenuModal from "./components/UI/MenuModal";
 import Header from "./components/Game/Header";
 import Gameboard from "./components/Game/Gameboard";
 import Scoreboard from "./components/Game/Scoreboard";
-import { machineDefense, checkRows, checkCols, checkLeftRight } from "./functions/gameLogic";
+import { checkForWinner, checkForFreeSpot, getTargets } from "./functions/gameLogic";
 import classes from "./App.module.css";
 
 const initialGameMap = {
@@ -23,20 +24,62 @@ const markA = "X";
 // Player B mark 'O'
 const markB = "O";
 let isPlayerMarked = Math.floor(Math.random() * 2);
+// levels:
+// level 0 => only random machine targets
+// level 1 => defense targets
+// level 2 => defense & offense targets
 
 function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState("1");
+  const [level, setLevel] = useState(2);
   const [gameMap, setGameMap] = useState(initialGameMap);
   const [scorePlayerA, setScorePlayerA] = useState(0);
   const [scorePlayerB, setScorePlayerB] = useState(0);
   const [scoreTie, setScoreTie] = useState(0);
   const [highlight, setHighlight] = useState();
 
+  const openMenuHandler = () => {
+    setIsMenuOpen("1");
+  };
+
+  const closeMenuHandler = () => {
+    setIsMenuOpen("0");
+  };
+
+  const setLevelHandler = (num) => {
+    setLevel(num);
+  };
+
   state = { ...gameMap };
+
+  const checkGameStatus = () => {
+    if (checkForWinner(state, markA, markB)) {
+      isGameEnd = true;
+      const result = checkForWinner(state, markA, markB);
+      if (result.winner === markA) {
+        setScorePlayerA((prevScore) => {
+          return ++prevScore;
+        });
+      }
+      if (result.winner === markB) {
+        setScorePlayerB((prevScore) => {
+          return ++prevScore;
+        });
+      }
+      setHighlight(result.line);
+    } else if (!checkForFreeSpot(state)) {
+      isGameEnd = true;
+      setScoreTie((prevScore) => {
+        return ++prevScore;
+      });
+      setHighlight("t");
+    }
+  };
 
   const spotClickHandler = (spotId) => {
     if (isGameEnd) {
       newGame();
-    } else if (gameMap[spotId] === null) {
+    } else if (gameMap[spotId] === null && !isPlayerMarked) {
       isPlayerMarked = true;
       state = { ...gameMap, [spotId]: markA };
       setGameMap((prevState) => {
@@ -45,8 +88,7 @@ function App() {
           [spotId]: markA,
         };
       });
-      checkForTie();
-      checkForWinner();
+      checkGameStatus();
     }
   };
 
@@ -56,70 +98,34 @@ function App() {
     isGameEnd = false;
   };
 
+  // if it is the machine turn
   if (!isGameEnd) {
     if (isPlayerMarked && Object.values(gameMap).includes(null)) {
-      isPlayerMarked = false;
       setTimeout(() => {
-        const targets = machineDefense(state, markA, markB);
-        if (targets.length > 0) {
-          machineMark(targets);
-        } else {
-          const remainingSpots = Object.entries(gameMap)
-            .filter((spot) => spot[1] === null && spot)
-            .map((spot) => spot[0]);
-          machineMark(remainingSpots);
+        isPlayerMarked = false;
+        const targets = [];
+        const targetsOffense = getTargets(state, markA, markB, "offense");
+        const targetsDefense = getTargets(state, markA, markB, "defense");
+        const targetsRemains = Object.entries(gameMap)
+          .filter((spot) => spot[1] === null && spot)
+          .map((spot) => spot[0]);
+
+        if (targetsOffense.length > 0 && level === 2) {
+          // offense mode
+          targets.push(...targetsOffense);
+        } else if (targetsDefense.length > 0 && level >= 1) {
+          // defense mode
+          targets.push(...targetsDefense);
+        } else if (level >= 0) {
+          // remains mode
+          targets.push(...targetsRemains);
         }
-        checkForTie();
-        checkForWinner();
+
+        machineMark(targets);
+        checkGameStatus();
       }, 600);
     }
   }
-
-  const checkForTie = () => {
-    if (!Object.values(state).includes(null)) {
-      isGameEnd = true;
-      setScoreTie((prevScore) => {
-        return ++prevScore;
-      });
-      setHighlight("t");
-    }
-  };
-
-  const checkForWinner = () => {
-    const row = checkRows(state, markA, markB).matchingRow;
-    const col = checkCols(state, markA, markB).matchingCol;
-    const leftRight = checkLeftRight(state, markA, markB).matching;
-    let winner;
-    let line;
-
-    if (row || col || leftRight) {
-      isGameEnd = true;
-      if (row) {
-        winner = row[1];
-        line = row[0];
-      }
-      if (col) {
-        winner = col[1];
-        line = col[0];
-      }
-      if (leftRight) {
-        winner = leftRight[1];
-        line = leftRight[0];
-      }
-
-      if (winner === "A") {
-        setScorePlayerA((prevScore) => {
-          return ++prevScore;
-        });
-      }
-      if (winner === "B") {
-        setScorePlayerB((prevScore) => {
-          return ++prevScore;
-        });
-      }
-      setHighlight(line);
-    }
-  };
 
   const machineMark = (targets) => {
     const targLen = targets.length;
@@ -145,11 +151,14 @@ function App() {
   };
 
   return (
-    <div className={classes.app}>
-      <Header />
-      <Gameboard highlight={highlight} onSpotClick={spotClickHandler} gameMap={gameMap} />
-      <Scoreboard scorePlayerA={scorePlayerA} scorePlayerB={scorePlayerB} scoreTie={scoreTie} />
-    </div>
+    <React.Fragment>
+      {isMenuOpen === "1" && <MenuModal level={level} onLevelChange={setLevelHandler} onCloseMenu={closeMenuHandler} />}
+      <div className={classes.app}>
+        <Header onClickMenu={openMenuHandler} />
+        <Gameboard highlight={highlight} onSpotClick={spotClickHandler} gameMap={gameMap} />
+        <Scoreboard scorePlayerA={scorePlayerA} scorePlayerB={scorePlayerB} scoreTie={scoreTie} />
+      </div>
+    </React.Fragment>
   );
 }
 

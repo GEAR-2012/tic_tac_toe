@@ -1,0 +1,39 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(14, 5, 5, 0.75);
+  display: grid;
+  place-items: center;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.menu {
+  position: fixed;
+  top: 6rem;
+  left: 13%;
+  width: 74%;
+  overflow: hidden;
+  z-index: 11;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-family: "Orbitron", sans-serif;
+  color: var(--color-light);
+}
+
+@media only screen and (min-width: 768px) {
+  .menu {
+    top: 7rem;
+    left: 30%;
+    width: 40%;
+  }
+
+  .title {
+    font-size: 2.4rem;
+  }
+}

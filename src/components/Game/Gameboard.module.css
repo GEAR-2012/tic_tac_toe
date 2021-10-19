@@ -2,9 +2,10 @@
   display: grid;
   gap: 0.25rem;
   background-color: var(--color-light);
+  color: var(--color-light);
   grid-template-columns: repeat(3, 5.8rem);
   grid-template-rows: repeat(3, 5.8rem);
-  transition: all 0.6s ease-in-out;
+  transition: background-color 0.4s ease;
 }
 
 .spot {
@@ -18,11 +19,12 @@
   font-family: "Orbitron", sans-serif;
   font-size: 4rem;
   font-weight: 400;
+  transition: color 0.4s ease;
 }
 
 .tie {
   color: var(--color-dimmed);
-  background-color: var(--color-highlight);
+  background-color: var(--color-light);
 }
 
 .dim {
@@ -30,7 +32,7 @@
 }
 
 .hgl {
-  color: var(--color-highlight);
+  color: var(--color-light);
 }
 
 @media only screen and (min-width: 768px) {
